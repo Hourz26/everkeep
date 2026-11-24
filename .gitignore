@@ -1,0 +1,7 @@
+# 开发工具（截图脚本），不参与部署
+_dev/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini

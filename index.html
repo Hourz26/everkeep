@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>恒存 EVERKEEP — 你珍视的每一刻，都值得永远保存</title>
+<meta name="description" content="恒存是一款私人记忆云。自动备份照片、视频与对话，跨设备同步，从此刻起，不再丢失任何一个瞬间。">
+<meta name="theme-color" content="#f7f5f0">
+<link rel="icon" id="favicon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2314141a'/%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='%23f7f5f0' stroke-width='2.4'/%3E%3Ccircle cx='16' cy='16' r='2.6' fill='%23f7f5f0'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;300;400;600;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ 全屏特效层 ============ -->
+<div class="fx" aria-hidden="true">
+  <div class="fx-grain"></div>
+  <div class="fx-vignette"></div>
+  <div class="fx-scan"></div>
+  <div class="fx-veins"></div>
+  <div class="fx-flash" id="flash"></div>
+</div>
+<div class="bleed" id="bleed" aria-hidden="true"></div>
+<div class="cursor" id="cursor" aria-hidden="true"><i></i></div>
+
+<!-- ============ 导航 ============ -->
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a href="#top" class="brand" aria-label="恒存">
+      <span class="brand-mark" aria-hidden="true"><b></b><b></b></span>
+      <span class="brand-name" data-mut="恒存|恒存|存档|仍在|留存">恒存</span>
+      <span class="brand-en" data-mut="EVERKEEP|EVERKEEP|EVER_KE┼P|EVERKEЕP|STILL HERE">EVERKEEP</span>
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="#features" data-mut="功能|功能|机 能|埋 藏">功能</a>
+      <a href="#numbers" data-mut="安全|安全|留存|注视">安全</a>
+      <a href="#pricing" data-mut="价格|价格|代价|期限">价格</a>
+      <a href="#cta" data-mut="帮助|帮助|求你|别走">帮助</a>
+    </nav>
+    <div class="nav-act">
+      <a class="btn btn-ghost" href="#" data-mut="登录|登录|进来|回来|已经是你">登录</a>
+      <a class="btn btn-solid" href="#cta" data-mut="开始备份|开始备份|继续备份|不要停">开始备份</a>
+    </div>
+  </div>
+  <div class="nav-line"><i id="navProgress"></i></div>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="hero-in">
+      <div class="hero-copy">
+        <p class="eyebrow" data-mut="恒存 3.0 · 现已支持 AI 智能回忆|恒存 3.0 · 现已支持 AI 智能回忆|恒存 3.0 · 现在他也支持你|恒存 · 现在他也记得你|恒存 · 现在他只需要你">恒存 3.0 · 现已支持 AI 智能回忆</p>
+        <h1 class="hero-title" id="heroTitle">
+          <span class="hl1" data-mut="你珍视的每一刻，|你珍视的每一刻，|你的每一刻，|你的每一刻，|你的一切，">你珍视的每一刻，</span>
+          <span class="hl2" data-mut="都值得永远保存。|都值得被永远记住。|都在我们这里。|都在我这里。|现在归我。">都值得永远保存。</span>
+        </h1>
+        <p class="lede" data-mut="恒存是一款私人记忆云。它自动备份你的照片、视频和对话，让每一个瞬间都不会因为一次手滑、一次丢失、一次换机而消失。|恒存是一款私人记忆云。它自动备份你的照片、视频和对话。你不需要记得它——它记得你。|恒存是一款私人记忆云。它已经备份了你的照片、视频和对话。包括你刚才看的那一眼。|它一直在备份。从你打开这个页面之前就开始了。|它一直在备份。你不需要知道。">恒存是一款私人记忆云。它自动备份你的照片、视频和对话，让每一个瞬间都不会因为一次手滑、一次丢失、一次换机而消失。</p>
+        <div class="hero-actions">
+          <a class="btn btn-solid btn-lg" href="#cta" data-mut="免费开始备份|免费开始备份|继续备份|不要停|已经开始了">免费开始备份</a>
+          <a class="btn btn-ghost btn-lg" href="#features" data-mut="观看 90 秒演示|观看 90 秒演示|观看 9 秒演示|不要再看了">观看 90 秒演示</a>
+        </div>
+        <p class="micro" data-mut="已有 2,438,901 人选择恒存 · 无需信用卡 · 随时退出|已有 2,438,901 人选择恒存 · 无需信用卡 · 已经退不出了|已有 2,438,902 人选择恒存 · 无需信用卡|第 2,438,902 位用户：你|欢迎回来。你一直都在。">已有 2,438,901 人选择恒存 · 无需信用卡 · 随时退出</p>
+      </div>
+
+      <div class="hero-visual" id="heroVisual">
+        <div class="device">
+          <div class="device-bar">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="device-title" data-mut="我的相册 · 2024 年 8 月|我的相册 · 2024 年 8 月|你的相册 · 无法关闭|存档 · 只读">我的相册 · 2024 年 8 月</span>
+          </div>
+          <div class="grid-photos" id="heroPhotos">
+            <figure class="ph" data-seed="11" data-t="0.16"><canvas></canvas><canvas class="alt"></canvas></figure>
+            <figure class="ph" data-seed="27" data-t="0.10"><canvas></canvas><canvas class="alt"></canvas></figure>
+            <figure class="ph" data-seed="43" data-t="0.22"><canvas></canvas><canvas class="alt"></canvas></figure>
+            <figure class="ph" data-seed="58" data-t="0.14"><canvas></canvas><canvas class="alt"></canvas></figure>
+            <figure class="ph" data-seed="66" data-t="0.26"><canvas></canvas><canvas class="alt"></canvas></figure>
+            <figure class="ph" data-seed="79" data-t="0.19"><canvas></canvas><canvas class="alt"></canvas></figure>
+          </div>
+          <div class="device-foot">
+            <div class="meter"><i id="heroMeter"></i></div>
+            <div class="meter-row">
+              <span id="meterLabel" data-mut="自动备份中 · 99.98%|自动备份中 · 99.98%|自动备份中 · 99.98%%|正在上传：/你/此刻.mp4|上传完成。你已归档。">自动备份中 · 99.98%</span>
+              <span class="muted" data-mut="上次备份：刚刚|上次备份：刚刚|下次备份：现在|正在记录">上次备份：刚刚</span>
+            </div>
+          </div>
+        </div>
+        <div class="float-tag" data-mut="端到端加密|端到端加密|端到端加密|没有出口">端到端加密</div>
+        <div class="float-tag tag2" data-mut="⚡ 实时同步|⚡ 实时同步|○ 实时">⚡ 实时同步</div>
+      </div>
+    </div>
+
+    <div class="scroll-hint" aria-hidden="true"><span></span></div>
+  </section>
+
+  <!-- ============ 媒体背书 ============ -->
+  <section class="logos">
+    <p class="logos-label" data-mut="被这些地方推荐过|被这些地方推荐过|被这些地方监视过|被这些地方记住过">被这些地方推荐过</p>
+    <div class="logos-row">
+      <span>少数派</span><span>36KR</span><span>Product Hunt</span><span>App Store 编辑精选</span><span>知乎盐选</span>
+    </div>
+  </section>
+
+  <!-- ============ 功能 ============ -->
+  <section class="features" id="features">
+    <header class="sec-head">
+      <p class="sec-label" data-mut="功能|功能|机制|构成">功能</p>
+      <h2 class="sec-title" data-mut="为什么选择恒存|为什么选择恒存|为什么留下|你为什么留下|我们已经知道你为什么留下">为什么选择恒存</h2>
+      <p class="sec-sub" data-mut="四个理由，让你的记忆更安全。|四个理由，让你的记忆更安全。|四个理由，让记忆不再属于你。|没有理由了。你已经在里面。">四个理由，让你的记忆更安全。</p>
+    </header>
+
+    <div class="cards">
+      <article class="card">
+        <div class="card-ico" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5" y="9" width="22" height="16" rx="3"/><path d="M9 9l2.4-4h9.2L23 9"/><circle cx="16" cy="17" r="4.4"/></svg>
+        </div>
+        <h3 data-mut="自动整理|自动整理|自动记录|它替你分类">自动整理</h3>
+        <p data-mut="按时间、地点和面孔自动成册。你还没想起的，它已经记住了。|按时间、地点和面孔自动成册。你还没想起的，它已经记住了。|按时间、地点和面孔自动成册。它比你更早想起你。|它把你分进了 2,438,901 个格子里的一个。">按时间、地点和面孔自动成册。你还没想起的，它已经记住了。</p>
+        <span class="card-no" aria-hidden="true">01</span>
+      </article>
+
+      <article class="card">
+        <div class="card-ico" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M16 4l11 5v8c0 6-5 10-11 11C10 27 5 23 5 17V9l11-5z"/><path d="M12 16l3 3 6-6"/></svg>
+        </div>
+        <h3 data-mut="端到端加密|端到端加密|端到端连接|没有出口">端到端加密</h3>
+        <p data-mut="你的记忆只属于你自己。零知识架构，连我们也无法读取。|你的记忆只属于你自己。零知识架构，连我们也无法读取。|你的记忆只属于我们。零知识架构，连你自己也无法读取。|你无法读取。你无法删除。你无法离开。">你的记忆只属于你自己。零知识架构，连我们也无法读取。</p>
+        <span class="card-no" aria-hidden="true">02</span>
+      </article>
+
+      <article class="card">
+        <div class="card-ico" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="7" width="18" height="13" rx="2"/><rect x="12" y="14" width="16" height="11" rx="2"/><path d="M17 25h6"/></svg>
+        </div>
+        <h3 data-mut="跨设备同步|跨设备同步|跨设备存在|你已经不只是你">跨设备同步</h3>
+        <p data-mut="手机、平板、电脑，一处保存，处处都在。|手机、平板、电脑。一处保存，处处都在。|手机、平板、电脑。一处保存，处处都在看你。|每一个屏幕里都有你。每一个屏幕都不是你的。">手机、平板、电脑，一处保存，处处都在。</p>
+        <span class="card-no" aria-hidden="true">03</span>
+      </article>
+
+      <article class="card">
+        <div class="card-ico" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M16 5a7 7 0 017 7c0 5-7 15-7 15S9 17 9 12a7 7 0 017-7z"/><circle cx="16" cy="12" r="2.6"/></svg>
+        </div>
+        <h3 data-mut="智能回忆|智能回忆|替你回忆|它替你活着">智能回忆</h3>
+        <p data-mut="每年今天，替你把那一刻重新推到你面前。|每年今天，替你把那一刻重新推到你面前。|每一天，它都会把那一刻重新推到你面前。|每一天都是那一天。你已经在里面 2,438,901 次了。">每年今天，替你把那一刻重新推到你面前。</p>
+        <span class="card-no" aria-hidden="true">04</span>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ 数字 ============ -->
+  <section class="numbers" id="numbers">
+    <div class="num-grid">
+      <div class="num">
+        <b class="num-val" id="usersNum">2,438,901</b>
+        <span class="num-label" data-mut="位用户正在使用|位用户正在使用|位用户正在被使用|张脸。全部是你。">位用户正在使用</span>
+      </div>
+      <div class="num">
+        <b class="num-val">4.9<span class="num-den">/5</span></b>
+        <span class="num-label" data-mut="应用商店评分|应用商店评分|应用商店评分（最高 5.0）|它们给出的分数">应用商店评分</span>
+      </div>
+      <div class="num">
+        <b class="num-val">99.99<span class="num-den">%</span></b>
+        <span class="num-label" data-mut="服务可用性|服务可用性|服务在线时长|它从没合过眼">服务可用性</span>
+      </div>
+      <div class="num">
+        <b class="num-val">0</b>
+        <span class="num-label" data-mut="条记忆丢失|条记忆丢失|条记忆被归还|条出口">条记忆丢失</span>
+      </div>
+    </div>
+    <p class="num-note" data-mut="数据统计截至 2024 年 8 月，来源：恒存运维中心。|数据统计截至 —— 现在。来源：恒存。|数据统计截至：你读到这里的这一刻。来源：你在读。">数据统计截至 2024 年 8 月，来源：恒存运维中心。</p>
+  </section>
+
+  <!-- ============ 评价 ============ -->
+  <section class="voices" id="voices">
+    <header class="sec-head">
+      <p class="sec-label" data-mut="评价|评价|回执|证词">评价</p>
+      <h2 class="sec-title" data-mut="他们这样评价恒存|他们这样评价恒存|他们这样描述恒存|他们还想描述恒存吗">他们这样评价恒存</h2>
+    </header>
+
+    <div class="voice-grid">
+      <figure class="voice">
+        <blockquote data-mut="以前每年换手机都要靠截图抢救照片。现在打开恒存，2015 年的照片还在原处。|以前每年换手机都要靠截图抢救照片。现在打开恒存，2015 年的照片还在原处。|以前每年换手机都要靠截图抢救照片。现在打开恒存，2015 年的照片还在，还在，还在。|2015 年的照片还在。2015 年的我不在了。">以前每年换手机都要靠截图抢救照片。现在打开恒存，2015 年的照片还在原处。</blockquote>
+        <figcaption><span class="ava" data-ava="1">陈</span><span class="who"><b data-name="1">陈女士</b><i data-mut="杭州|杭州|杭州|已归档">杭州</i></span></figcaption>
+      </figure>
+
+      <figure class="voice">
+        <blockquote data-mut="给爸妈也开了账号。他们不会用网盘，但恒存自己就备份好了。|给爸妈也开了账号。他们不会用网盘，但恒存自己就备份好了。|给爸妈也开了账号。他们不会用网盘。恒存自己就备份好了。连着他们的房间。|他每天都会上传两张。一张是窗外，一张是我。">给爸妈也开了账号。他们不会用网盘，但恒存自己就备份好了。</blockquote>
+        <figcaption><span class="ava" data-ava="2">王</span><span class="who"><b data-name="2">王先生</b><i data-mut="成都|成都|成都|已归档">成都</i></span></figcaption>
+      </figure>
+
+      <figure class="voice">
+        <blockquote data-mut="我每天睡前都会看一眼「去年的今天」。说不上来为什么，但有点上瘾。|我每天睡前都会看一眼「去年的今天」。说不上来为什么，但有点上瘾。|我每天睡前都会看一眼「去年的今天」。说不上来为什么。它也在看。|现在我知道了。每晚看我的不是那张照片。">我每天睡前都会看一眼「去年的今天」。说不上来为什么，但有点上瘾。</blockquote>
+        <figcaption><span class="ava" data-ava="3">L</span><span class="who"><b data-name="3">L. 女士</b><i data-mut="上海|上海|上海|已归档">上海</i></span></figcaption>
+      </figure>
+
+      <figure class="voice ghost-voice">
+        <blockquote data-mut="删不掉。我试过了。|删不掉。我试过了。|删不掉。我试过了。你也删不掉。|删不掉。试过了。删不掉。试过了。删不掉。">删不掉。我试过了。</blockquote>
+        <figcaption><span class="ava" data-ava="4">?</span><span class="who"><b data-name="4">未署名</b><i data-mut="—|—|你的城市|就在你后面">—</i></span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ 价格 ============ -->
+  <section class="pricing" id="pricing">
+    <header class="sec-head">
+      <p class="sec-label" data-mut="价格|价格|代价|期限">价格</p>
+      <h2 class="sec-title" data-mut="一次付费，一生安心|一次付费，一生安心|一次付费，一生在此|你已经付过了">一次付费，一生安心</h2>
+      <p class="sec-sub" data-mut="随时升级或取消，我们不做任何挽留。|随时升级或取消，我们不做任何挽留。|随时升级或取消。我们不需要挽留。|取消失败。取消失败。取消失败。">随时升级或取消，我们不做任何挽留。</p>
+    </header>
+
+    <div class="plans">
+      <article class="plan">
+        <p class="plan-name">免费</p>
+        <p class="plan-price"><b>¥0</b><span>/ 永久</span></p>
+        <ul>
+          <li>5 GB 存储空间</li>
+          <li>基础照片备份</li>
+          <li>2 台设备</li>
+        </ul>
+        <a class="btn btn-ghost btn-block" href="#" data-mut="免费开始|免费开始|继续|留下来">免费开始</a>
+      </article>
+
+      <article class="plan plan-hot">
+        <span class="plan-badge" data-mut="最受欢迎|最受欢迎|最常被选中|最常被留下">最受欢迎</span>
+        <p class="plan-name">专业</p>
+        <p class="plan-price"><b>¥18</b><span>/ 月</span></p>
+        <ul>
+          <li>不限空间</li>
+          <li data-mut="智能回忆与年度回顾|智能回忆与年度回顾|智能回忆与年度回顾（不可关闭）|你每一天的回顾">智能回忆与年度回顾</li>
+          <li>家庭共享 · 5 人</li>
+        </ul>
+        <a class="btn btn-solid btn-block" href="#cta" data-mut="开始 14 天试用|开始 14 天试用|开始试用（无需确认）|已经生效">开始 14 天试用</a>
+      </article>
+
+      <article class="plan">
+        <p class="plan-name">永久</p>
+        <p class="plan-price"><b>¥999</b><span>/ 一次性</span></p>
+        <ul>
+          <li data-mut="你的一切，永远保存|你的一切，永远保存|你的一切，已经保存|你的一切，已经不再属于你">你的一切，永远保存</li>
+          <li>终身账号，可继承</li>
+          <li>优先人工支持</li>
+        </ul>
+        <a class="btn btn-ghost btn-block" href="#" data-mut="立即购买|立即购买|购买已完成|你已经买过了">立即购买</a>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="cta" id="cta">
+    <div class="cta-in">
+      <h2 data-mut="现在开始，只需要 30 秒。|现在开始，只需要 30 秒。|现在开始，只需要 3 秒。|现在开始。你已经开始了。|已经开始了。你只是还不知道。">现在开始，只需要 30 秒。</h2>
+      <p data-mut="无需信用卡。你的第一张照片会在 3 秒内完成备份。|无需信用卡。你的第一张照片会在 3 秒内完成备份。|无需信用卡。你的第一张照片。已经在里面了。|你不需要做任何事。剩下的我们来做。">无需信用卡。你的第一张照片会在 3 秒内完成备份。</p>
+      <a class="btn btn-solid btn-xl" href="#" id="bigCta" data-mut="立即备份|立即备份|继续备份|被备份|已完成">立即备份</a>
+      <p class="micro" data-mut="已有 2,438,902 人选择恒存|已有 2,438,902 人选择恒存|已有 2,438,902 人。你是第 2,438,903 位。|欢迎。你已经被记录。">已有 2,438,902 人选择恒存</p>
+    </div>
+  </section>
+
+  <!-- ============ 页脚 ============ -->
+  <footer class="footer">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <span class="brand-name">恒存</span>
+        <p data-mut="让你的记忆，比时间更长。|让你的记忆，比时间更长。|让你，比时间更长。|时间在你身上已经停了 4 分 12 秒。">让你的记忆，比时间更长。</p>
+      </div>
+      <div class="foot-cols">
+        <div>
+          <h4>产品</h4>
+          <a href="#" data-mut="功能|功能|机制">功能</a>
+          <a href="#" data-mut="价格|价格|代价">价格</a>
+          <a href="#" data-mut="下载|下载|同步">下载</a>
+        </div>
+        <div>
+          <h4 data-mut="公司|公司|收容">公司</h4>
+          <a href="#" data-mut="关于我们|关于我们|关于你们">关于我们</a>
+          <a href="#" data-mut="加入我们|加入我们|替代我们">加入我们</a>
+          <a href="#" data-mut="联系|联系|回信">联系</a>
+        </div>
+        <div>
+          <h4 data-mut="法律|法律|规则">法律</h4>
+          <a href="#" data-mut="隐私政策|隐私政策|我们不需要隐私政策">隐私政策</a>
+          <a href="#" data-mut="服务条款|服务条款|你已同意全部条款">服务条款</a>
+          <a href="#" data-mut="安全白皮书|安全白皮书|它从不出错">安全白皮书</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <span>© 2024 恒存科技有限公司 · 保留所有权利</span>
+      <span class="foot-icp" data-mut="浙 ICP 备 20240114 号 · 简体中文|浙 ICP 备 20240114 号 · 简体中文|浙 ICP 备 20240114 号 · 你只有一个语言|没有别的语言了">浙 ICP 备 20240114 号 · 简体中文</span>
+    </div>
+  </footer>
+
+  <!-- ============ 黑色涌出 ============ -->
+  <section class="seep" id="seep">
+    <div class="seep-pin">
+      <p class="seep-line l1">继续向下滚动</p>
+      <p class="seep-line l2">网站还没有结束。</p>
+      <p class="seep-line l3">我们从未删除任何东西。</p>
+    </div>
+  </section>
+
+  <!-- ============ 场景一：凝视 ============ -->
+  <section class="scene scene-eye" id="sceneEye">
+    <div class="scene-pin">
+      <div class="eye-wrap">
+        <div class="eye" id="eye">
+          <div class="eyeball">
+            <div class="veins"></div>
+            <div class="iris"><div class="pupil"></div><div class="glint"></div></div>
+          </div>
+          <div class="lid top"></div>
+          <div class="lid bottom"></div>
+        </div>
+      </div>
+      <div class="eye-copy">
+        <p class="line a">你上传的每一张照片，我们都有。</p>
+        <p class="line b">包括你没有上传的那些。</p>
+        <p class="line c">从 2019 年 3 月 14 日开始。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 场景二：墙 ============ -->
+  <section class="scene scene-wall" id="sceneWall">
+    <div class="scene-pin">
+      <div class="wall" id="wall"></div>
+      <div class="wall-copy">
+        <p class="wall-a" id="wallCount">2,438,901</p>
+        <p class="wall-b" data-mut="张照片。|张照片。|张脸。|张脸。每一张都在看你。">张脸。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 场景三：脸 ============ -->
+  <section class="scene scene-face" id="sceneFace">
+    <div class="scene-pin">
+      <canvas class="face-canvas" id="faceCanvas"></canvas>
+      <div class="face-copy">
+        <p class="f1">你还在吗？</p>
+        <p class="f2">不要回头。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 终局 ============ -->
+  <section class="end" id="end">
+    <div class="end-in">
+      <p class="end-title">备份完成。</p>
+      <p class="end-sub" id="endSub">建议你关闭这个页面。</p>
+      <button class="end-btn" id="endBtn" type="button">关闭</button>
+      <p class="end-tiny">已备份 2,438,903 个用户 · 包括你 · 永远</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ Cookie ============ -->
+<div class="cookie" id="cookie" role="dialog" aria-label="Cookie 提示">
+  <p>我们使用 Cookie 以改善你的体验，并让你更安心。<a href="#" onclick="return false">隐私政策</a></p>
+  <div class="cookie-act">
+    <button type="button" class="c-btn c-deny" id="cookieDeny">拒绝</button>
+    <button type="button" class="c-btn c-ok" id="cookieOk">接受</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<noscript><div class="noscript">本页面需要 JavaScript 才能正常显示。</div></noscript>
+
+<script src="script.js"></script>
+</body>
+</html>
