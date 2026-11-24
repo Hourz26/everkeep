@@ -1136,6 +1136,80 @@ body[data-eye="3"] .eye { box-shadow: 0 0 0 1px rgba(255,80,80,.12), 0 0 200px r
 }
 
 /* =========================================================
+   植入的眼睛 —— 崩坏从最小的元素开始
+   ========================================================= */
+.implant-host { position: relative; }
+
+.implant {
+  position: absolute;
+  width: 13px; height: 9px;
+  pointer-events: none;
+  z-index: 6;
+  opacity: 0;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.25));
+  transition: opacity .9s var(--ease);
+}
+.implant.on {
+  opacity: 1;
+  animation: implantAppear .6s steps(3, end);
+}
+@keyframes implantAppear {
+  0%   { opacity: 0; }
+  35%  { opacity: 1; }
+  55%  { opacity: .15; }
+  100% { opacity: 1; }
+}
+
+/* 眼球本体：一小片湿润的白 */
+.implant i {
+  display: block;
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 42% 38%, #fbf7ec 0%, #e8e1d2 62%, #c9c0ad 100%);
+  box-shadow: inset 0 -1px 2px rgba(60,50,40,.35), inset 0 1px 1px rgba(255,255,255,.7);
+  position: relative;
+  overflow: hidden;
+  animation: implantBlink 5.5s infinite;
+}
+@keyframes implantBlink {
+  0%, 90.5%, 100% { transform: scaleY(1); }
+  92.5% { transform: scaleY(.06); }
+  94.5% { transform: scaleY(1); }
+  96%   { transform: scaleY(.06); }
+  97.5% { transform: scaleY(1); }
+}
+
+/* 瞳孔：跟着光标，微微地看 */
+.implant i::after {
+  content: "";
+  position: absolute;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #3a3a40 0%, #0a0a0c 55%);
+  left: calc(50% + var(--ex, 0px) - 3px);
+  top: calc(50% + var(--ey, 0px) - 3px);
+  transition: left .25s var(--ease), top .25s var(--ease);
+}
+
+/* 摆放位置 */
+.implant.p-tr { top: -6px; right: -6px; }
+.implant.p-br { bottom: -5px; right: -6px; }
+.implant.p-bl { bottom: -5px; left: -6px; }
+.implant.p-l  { left: -18px; top: 50%; margin-top: -5px; }
+.implant.p-r  { right: -18px; top: 50%; margin-top: -5px; }
+.implant.p-c  { left: 50%; top: 50%; width: 18px; height: 13px; margin: -7px 0 0 -9px; }
+
+/* 后期：瞳孔变成充血的暗红，眼睛也更大 */
+body[data-stage="3"] .implant i::after,
+body[data-stage="4"] .implant i::after {
+  background: radial-gradient(circle at 40% 35%, #7e1414 0%, #2c0404 60%);
+}
+body[data-stage="3"] .implant,
+body[data-stage="4"] .implant { width: 16px; height: 11px; }
+body[data-stage="3"] .implant.p-c,
+body[data-stage="4"] .implant.p-c { width: 22px; height: 16px; margin: -8px 0 0 -11px; }
+
+/* =========================================================
    响应式
    ========================================================= */
 @media (max-width: 980px) {

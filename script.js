@@ -219,103 +219,89 @@
     vignette(ctx, w, h, 0.55);
   }
 
-  /* ---- 同一张脸 ---- */
-  function drawFace(ctx, w, h, seed, bright) {
+  /* ---- 黑暗中站着一个人影（逆光剪影，看不清是谁） ---- */
+  function drawFigure(ctx, w, h, seed, opts) {
     const r = mulberry32(seed * 104729 + 7);
+    const o = opts || {};
+    const bright = o.bright == null ? 1 : o.bright;
+    const zoom = o.zoom == null ? 1 : o.zoom;
+    const lift = o.lift == null ? 0 : o.lift;
+
     ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = '#08080a';
+
+    /* 背后有光，但不亮 —— 昏的、有雾的，人影才立得住 */
+    const bg = ctx.createRadialGradient(
+      w * 0.5, h * (0.40 - lift * 0.5), 0,
+      w * 0.5, h * (0.52 - lift * 0.4), Math.max(w, h) * 0.95
+    );
+    bg.addColorStop(0, 'rgb(' + Math.round(60 * bright) + ',' + Math.round(56 * bright) + ',' + Math.round(49 * bright) + ')');
+    bg.addColorStop(0.28, 'rgb(' + Math.round(36 * bright) + ',' + Math.round(33 * bright) + ',' + Math.round(29 * bright) + ')');
+    bg.addColorStop(0.60, 'rgb(' + Math.round(17 * bright) + ',' + Math.round(16 * bright) + ',' + Math.round(15 * bright) + ')');
+    bg.addColorStop(1, '#040405');
+    ctx.fillStyle = bg;
     ctx.fillRect(0, 0, w, h);
 
-    /* 填满式：让脸稍微超出画布，露出眼睛到嘴这一带 */
-    const cx = w * (0.5 + (r() - 0.5) * 0.06);
-    const cy = h * (0.52 + (r() - 0.5) * 0.04);
-    const rx = w * (0.44 + r() * 0.07);
-    const ry = h * (0.50 + r() * 0.07);
-    const b = bright == null ? 1 : bright;
+    /* 一点点雾，让人影不是贴在纯色上 */
+    for (let i = 0; i < 3; i++) {
+      const fx = w * (0.2 + r() * 0.6);
+      const fy = h * (0.3 + r() * 0.5);
+      const fr = Math.max(w, h) * (0.3 + r() * 0.35);
+      const fg = ctx.createRadialGradient(fx, fy, 0, fx, fy, fr);
+      fg.addColorStop(0, 'rgba(120,112,100,' + (0.05 * bright) + ')');
+      fg.addColorStop(1, 'rgba(120,112,100,0)');
+      ctx.fillStyle = fg;
+      ctx.fillRect(0, 0, w, h);
+    }
 
-    /* 头 */
-    const g = ctx.createRadialGradient(cx, cy - ry * 0.28, 0, cx, cy, ry * 1.2);
-    g.addColorStop(0, 'rgba(' + Math.round(196 * b) + ',' + Math.round(186 * b) + ',' + Math.round(170 * b) + ',1)');
-    g.addColorStop(0.42, 'rgba(' + Math.round(138 * b) + ',' + Math.round(130 * b) + ',' + Math.round(118 * b) + ',1)');
-    g.addColorStop(0.78, 'rgba(' + Math.round(62 * b) + ',' + Math.round(58 * b) + ',' + Math.round(52 * b) + ',1)');
-    g.addColorStop(1, 'rgba(6,6,7,1)');
+    /* ---- 人影几何 ---- */
+    const cx = w * (0.5 + (r() - 0.5) * 0.12);
+    const base = Math.min(w, h);
+    const headR = base * 0.135 * zoom;
+    const headH = headR * 1.14;
+    const headY = h * (0.40 - lift) - headR * (zoom - 1) * 0.55;
+    const neckW = headR * 0.40;
+    const shW = headR * 3.45;
+    const shY = headY + headH * 1.55;
+
+    /* 身体：脖子 → 肩 → 向下没出画面 */
     ctx.beginPath();
-    /* 用两段贝塞尔画出下颌收窄的脸型，而不是纯椭圆 */
-    ctx.moveTo(cx, cy - ry);
-    ctx.bezierCurveTo(cx + rx * 0.86, cy - ry * 0.98, cx + rx, cy - ry * 0.18, cx + rx * 0.86, cy + ry * 0.3);
-    ctx.bezierCurveTo(cx + rx * 0.66, cy + ry * 0.86, cx + rx * 0.24, cy + ry, cx, cy + ry);
-    ctx.bezierCurveTo(cx - rx * 0.24, cy + ry, cx - rx * 0.66, cy + ry * 0.86, cx - rx * 0.86, cy + ry * 0.3);
-    ctx.bezierCurveTo(cx - rx, cy - ry * 0.18, cx - rx * 0.86, cy - ry * 0.98, cx, cy - ry);
+    ctx.moveTo(cx - shW, h + h * 0.1);
+    ctx.bezierCurveTo(cx - shW * 0.99, shY + (h - shY) * 0.22, cx - shW * 0.62, shY + h * 0.02, cx - neckW * 1.35, shY - headH * 0.08);
+    ctx.lineTo(cx - neckW, headY + headH * 0.72);
+    ctx.lineTo(cx + neckW, headY + headH * 0.72);
+    ctx.lineTo(cx + neckW * 1.35, shY - headH * 0.08);
+    ctx.bezierCurveTo(cx + shW * 0.62, shY + h * 0.02, cx + shW * 0.99, shY + (h - shY) * 0.22, cx + shW, h + h * 0.1);
     ctx.closePath();
-    ctx.fillStyle = g;
-    ctx.fill();
-
-    /* 颧骨阴影 */
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(cx, cy - ry);
-    ctx.bezierCurveTo(cx + rx * 0.86, cy - ry * 0.98, cx + rx, cy - ry * 0.18, cx + rx * 0.86, cy + ry * 0.3);
-    ctx.bezierCurveTo(cx + rx * 0.66, cy + ry * 0.86, cx + rx * 0.24, cy + ry, cx, cy + ry);
-    ctx.bezierCurveTo(cx - rx * 0.24, cy + ry, cx - rx * 0.66, cy + ry * 0.86, cx - rx * 0.86, cy + ry * 0.3);
-    ctx.bezierCurveTo(cx - rx, cy - ry * 0.18, cx - rx * 0.86, cy - ry * 0.98, cx, cy - ry);
-    ctx.closePath();
-    ctx.clip();
-    const sg = ctx.createRadialGradient(cx, cy + ry * 0.5, rx * 0.2, cx, cy + ry * 0.4, rx * 1.1);
-    sg.addColorStop(0, 'rgba(0,0,0,.55)');
-    sg.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = sg;
-    ctx.fillRect(0, 0, w, h);
-    ctx.restore();
-
-    /* 眼窝 + 眼洞 */
-    const eyeY = cy - ry * 0.16;
-    const eyeDX = rx * 0.40;
-    const eyeRX = rx * 0.22;
-    const eyeRY = ry * 0.125;
-    [-1, 1].forEach(function (s, idx) {
-      /* 眼窝阴影 */
-      const og = ctx.createRadialGradient(cx + s * eyeDX, eyeY, 0, cx + s * eyeDX, eyeY, eyeRX * 2.1);
-      og.addColorStop(0, 'rgba(0,0,0,.85)');
-      og.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = og;
-      ctx.beginPath();
-      ctx.ellipse(cx + s * eyeDX, eyeY, eyeRX * 2.1, eyeRY * 2.1, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      /* 眼洞 */
-      ctx.beginPath();
-      ctx.ellipse(cx + s * eyeDX, eyeY, eyeRX, eyeRY * (1 + r() * 0.15), (r() - 0.5) * 0.16, 0, Math.PI * 2);
-      ctx.fillStyle = '#000';
-      ctx.fill();
-
-      /* 一点反光 */
-      ctx.beginPath();
-      ctx.arc(cx + s * eyeDX + eyeRX * 0.34, eyeY - eyeRY * 0.28, Math.max(0.8, w * 0.012), 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(240,235,220,' + (0.5 + r() * 0.3) + ')';
-      ctx.fill();
-    });
-
-    /* 鼻梁影 */
-    const ng = ctx.createLinearGradient(cx - rx * 0.12, eyeY, cx + rx * 0.12, eyeY);
-    ng.addColorStop(0, 'rgba(0,0,0,0)');
-    ng.addColorStop(0.5, 'rgba(0,0,0,.38)');
-    ng.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = ng;
-    ctx.fillRect(cx - rx * 0.2, eyeY, rx * 0.4, ry * 0.44);
-
-    /* 嘴——一条没有牙齿的黑缝 */
-    const my = cy + ry * 0.46;
-    ctx.save();
-    ctx.filter = 'blur(' + Math.max(0.6, w * 0.005) + 'px)';
-    ctx.beginPath();
-    ctx.ellipse(cx, my, rx * (0.17 + r() * 0.05), ry * (0.07 + r() * 0.04), 0, 0, Math.PI * 2);
     ctx.fillStyle = '#000';
     ctx.fill();
+
+    /* 头 */
+    ctx.beginPath();
+    ctx.ellipse(cx, headY, headR * 0.88, headH * 0.92, (r() - 0.5) * 0.08, 0, Math.PI * 2);
+    ctx.fillStyle = '#000';
+    ctx.fill();
+
+    /* 轮廓光：背后有光，边缘就有一线极淡的亮 */
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = 'rgba(196,186,166,' + (0.13 * bright) + ')';
+    ctx.lineWidth = Math.max(1, base * 0.006);
+    ctx.beginPath();
+    ctx.ellipse(cx, headY, headR * 0.88, headH * 0.92, 0, Math.PI * 1.06, Math.PI * 1.94);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx - shW * 0.98, h + h * 0.1);
+    ctx.bezierCurveTo(cx - shW * 0.98, shY + (h - shY) * 0.22, cx - shW * 0.62, shY + h * 0.02, cx - neckW * 1.35, shY - headH * 0.08);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx + shW * 0.98, h + h * 0.1);
+    ctx.bezierCurveTo(cx + shW * 0.98, shY + (h - shY) * 0.22, cx + shW * 0.62, shY + h * 0.02, cx + neckW * 1.35, shY - headH * 0.08);
+    ctx.stroke();
     ctx.restore();
 
-    /* 颗粒 */
+    /* 颗粒 + 暗角 */
     grain(ctx, w, h, 1);
-    vignette(ctx, w, h, 0.86);
+    vignette(ctx, w, h, 0.92);
   }
 
   /* =========================================================
@@ -331,7 +317,7 @@
     drawPhoto(base.getContext('2d'), w, h, +fig.dataset.seed || 1, (idx || 0) % 4);
     if (alt) {
       alt.width = 300; alt.height = 375;
-      drawFace(alt.getContext('2d'), 300, 375, (+fig.dataset.seed || 1) + 3, 0.9);
+      drawFigure(alt.getContext('2d'), 300, 375, (+fig.dataset.seed || 1) + 3, { bright: 0.9 });
     }
   }
 
@@ -340,7 +326,13 @@
     const alt = $('canvas.alt', tile);
     const w = 200, h = 250;
     if (base) { base.width = w; base.height = h; drawPhoto(base.getContext('2d'), w, h, seed, idx % 4); }
-    if (alt) { alt.width = w; alt.height = h; drawFace(alt.getContext('2d'), w, h, seed + 101, 0.72 + (seed % 5) * 0.08); }
+    if (alt) {
+      alt.width = w; alt.height = h;
+      drawFigure(alt.getContext('2d'), w, h, seed + 101, {
+        bright: 0.7 + (seed % 5) * 0.09,
+        zoom: 0.92 + (seed % 4) * 0.06,
+      });
+    }
   }
 
   /* =========================================================
@@ -559,6 +551,7 @@
 
     /* 6. 文本 */
     updateMuts(X);
+    updateImplants(X);
 
     /* 6. 数字 */
     if (usersNum) {
@@ -681,267 +674,64 @@
     faceLast = key;
 
     const ctx = faceCanvas.getContext('2d');
-    const w = faceW, h = faceH;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, w, h);
 
-    /* 背景不是纯黑，是极深的冷灰 —— 脸得有地方「浮」出来 */
-    const bg = ctx.createRadialGradient(w * 0.5, h * 0.46, 0, w * 0.5, h * 0.46, Math.max(w, h) * 0.85);
-    bg.addColorStop(0, '#0b0b0e');
-    bg.addColorStop(1, '#020203');
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, w, h);
+    /* 从很远的地方开始，一直走过来。看不清是谁。 */
+    const close = smooth(0, 1, p);
+    drawFigure(ctx, faceW, faceH, 424242, {
+      zoom: 0.48 + close * 1.72,
+      bright: 0.52 + close * 0.55,
+      lift: 0.02 - close * 0.05,
+    });
+  }
 
-    const close = smooth(0.0, 1, p);
-    const scale = 0.44 + close * 1.15;
-    const cx = w * 0.5;
-    const cy = h * (0.53 + close * 0.03);
-    const rx = Math.min(w, h) * 0.315 * scale;
-    const ry = Math.min(w, h) * 0.40 * scale;
+  /* =========================================================
+     植入的眼睛 —— 崩坏从最小的元素开始
+     ========================================================= */
+  const POS = ['p-tr', 'p-br', 'p-bl', 'p-l', 'p-r'];
+  const implants = [];   // {el, host, opened:false, at:0..1}
+  let implantBuilt = false;
 
-    /* 头型：额头宽 → 颧骨 → 收窄的下颌 → 下巴。绝不能是椭圆。 */
-    function headPath() {
-      ctx.beginPath();
-      ctx.moveTo(cx, cy - ry);
-      ctx.bezierCurveTo(cx + rx * 0.50, cy - ry * 1.02, cx + rx * 0.90, cy - ry * 0.64, cx + rx * 0.98, cy - ry * 0.12);
-      ctx.bezierCurveTo(cx + rx * 1.03, cy + ry * 0.20, cx + rx * 0.88, cy + ry * 0.54, cx + rx * 0.58, cy + ry * 0.79);
-      ctx.bezierCurveTo(cx + rx * 0.33, cy + ry * 0.96, cx + rx * 0.12, cy + ry * 1.0, cx, cy + ry * 1.0);
-      ctx.bezierCurveTo(cx - rx * 0.12, cy + ry * 1.0, cx - rx * 0.33, cy + ry * 0.96, cx - rx * 0.58, cy + ry * 0.79);
-      ctx.bezierCurveTo(cx - rx * 0.88, cy + ry * 0.54, cx - rx * 1.03, cy + ry * 0.20, cx - rx * 0.98, cy - ry * 0.12);
-      ctx.bezierCurveTo(cx - rx * 0.90, cy - ry * 0.64, cx - rx * 0.50, cy - ry * 1.02, cx, cy - ry);
-      ctx.closePath();
-    }
-
-    /* 底色：光源在左上偏前，光到脸的中段就用完了 */
-    ctx.save();
-    headPath();
-    const base = ctx.createRadialGradient(cx - rx * 0.28, cy - ry * 0.30, 0, cx, cy, ry * 1.22);
-    base.addColorStop(0, '#6e675c');
-    base.addColorStop(0.30, '#544e46');
-    base.addColorStop(0.58, '#37332c');
-    base.addColorStop(0.80, '#1a1917');
-    base.addColorStop(0.94, '#0b0b0d');
-    base.addColorStop(1, '#040405');
-    ctx.fillStyle = base;
-    ctx.fill();
-    ctx.clip();
-
-    /* ---- 一半的脸沉在黑暗里（不对称最吓人） */
-    let g = ctx.createLinearGradient(cx - rx * 1.05, 0, cx + rx * 0.45, 0);
-    g.addColorStop(0, 'rgba(0,0,0,.82)');
-    g.addColorStop(0.42, 'rgba(0,0,0,.34)');
-    g.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, w, h);
-
-    /* ---- 额头：几道擦不掉的横纹（每行都歪，不能整齐） */
-    ctx.lineCap = 'round';
-    for (let i = 0; i < 6; i++) {
-      const t = i / 5;
-      const yy = cy - ry * 0.90 + t * ry * 0.34;
-      const amp = ry * 0.016 * (1 + t * 0.7);
-      const ph = i * 1.9 + ((i * 7) % 5) * 0.6;
-      ctx.strokeStyle = 'rgba(8,6,5,' + (0.10 + t * 0.12) + ')';
-      ctx.lineWidth = ry * 0.010 * (1 + t * 0.5) * (0.8 + ((i * 3) % 4) * 0.12);
-      ctx.beginPath();
-      for (let x = -1; x <= 1.001; x += 0.05) {
-        const px = cx + x * rx * 0.60;
-        const py = yy + Math.sin(x * 3.1 + ph) * amp - Math.abs(x) * amp * 1.2;
-        if (x <= -0.999) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-      }
-      ctx.stroke();
-
-      ctx.strokeStyle = 'rgba(226,220,206,' + (0.040 + t * 0.045) + ')';
-      ctx.lineWidth = ry * 0.0038;
-      ctx.beginPath();
-      for (let x = -1; x <= 1.001; x += 0.05) {
-        const px = cx + x * rx * 0.60;
-        const py = yy + ry * 0.011 + Math.sin(x * 3.1 + ph) * amp - Math.abs(x) * amp * 1.2;
-        if (x <= -0.999) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-      }
-      ctx.stroke();
-    }
-
-    /* ---- 眼窝 */
-    const eyeY = cy - ry * 0.20;
-    const eyeDX = rx * 0.445;
-    const eyeRX = rx * (0.175 + close * 0.02);
-    const eyeRY = ry * (0.098 + close * 0.012);
-
-    [-1, 1].forEach(function (s) {
-      const ex = cx + s * eyeDX;
-
-      /* 眼周皮下淤青的暗 */
-      g = ctx.createRadialGradient(ex, eyeY + eyeRY * 0.25, 0, ex, eyeY + eyeRY * 0.25, eyeRX * 2.4);
-      g.addColorStop(0, 'rgba(1,1,3,.98)');
-      g.addColorStop(0.40, 'rgba(4,4,8,.78)');
-      g.addColorStop(0.68, 'rgba(8,7,11,.30)');
-      g.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.ellipse(ex, eyeY + eyeRY * 0.25, eyeRX * 2.3, eyeRY * 2.7, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      /* 上眼睑压下来的厚阴影 */
-      g = ctx.createLinearGradient(0, eyeY - eyeRY * 2.6, 0, eyeY + eyeRY * 0.1);
-      g.addColorStop(0, 'rgba(0,0,0,0)');
-      g.addColorStop(1, 'rgba(0,0,0,.72)');
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.ellipse(ex, eyeY - eyeRY * 0.55, eyeRX * 2.0, eyeRY * 1.9, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      /* 眼洞 */
-      ctx.beginPath();
-      ctx.ellipse(ex, eyeY, eyeRX, eyeRY, s * 0.055, 0, Math.PI * 2);
-      const eg = ctx.createRadialGradient(ex, eyeY, 0, ex, eyeY, eyeRX);
-      eg.addColorStop(0, '#000');
-      eg.addColorStop(0.72, '#000');
-      eg.addColorStop(1, '#080607');
-      ctx.fillStyle = eg;
-      ctx.fill();
-
-      /* 眼洞深处唯一的反光 —— 两点，一大一小 */
-      ctx.beginPath();
-      ctx.arc(ex - s * eyeRX * 0.26, eyeY - eyeRY * 0.30, Math.max(1.3, w * 0.0018), 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(250,248,242,.92)';
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(ex + s * eyeRX * 0.34, eyeY + eyeRY * 0.26, Math.max(0.9, w * 0.0011), 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(200,196,186,.38)';
-      ctx.fill();
-
-      /* 下眼睑的湿润高光 */
-      ctx.beginPath();
-      ctx.ellipse(ex, eyeY + eyeRY * 0.94, eyeRX * 0.92, eyeRY * 0.28, 0, Math.PI * 0.06, Math.PI * 0.94);
-      ctx.strokeStyle = 'rgba(196,188,172,.22)';
-      ctx.lineWidth = ry * 0.006;
-      ctx.stroke();
-
-      /* 泪痕：从眼角往下拖，越往下越淡 */
-      for (let k = 0; k < 3; k++) {
-        const lx = ex + s * (eyeRX * (0.55 + k * 0.18));
-        const top = eyeY + eyeRY * 0.85;
-        const len = ry * (0.22 + k * 0.08);
-        const lg = ctx.createLinearGradient(lx, top, lx, top + len);
-        lg.addColorStop(0, 'rgba(6,5,5,.52)');
-        lg.addColorStop(0.5, 'rgba(12,10,9,.22)');
-        lg.addColorStop(1, 'rgba(12,10,9,0)');
-        ctx.fillStyle = lg;
-        ctx.fillRect(lx - rx * 0.008, top, rx * 0.016 * (1 - k * 0.2), len);
+  function buildImplants() {
+    if (implantBuilt) return;
+    implantBuilt = true;
+    /* 挑选"应该保持干净"的小元素：按钮、徽章、复选项、小标签 */
+    const hosts = $$(
+      '.btn, .plan-badge, .eyebrow, .c-btn, .float-tag, .device-title, .brand-mark, ' +
+      '.nav-links a, .foot-cols a, .plan li, .card-no, .end-btn, .who b'
+    );
+    hosts.forEach(function (host, i) {
+      if (host.dataset.implantHost) return;
+      /* 大按钮给两颗，小的给一颗；间距太密的地方隔一个放 */
+      const isBig = host.classList.contains('btn-lg') || host.classList.contains('btn-xl');
+      const count = isBig ? 2 : 1;
+      for (let k = 0; k < count; k++) {
+        const el = document.createElement('span');
+        el.className = 'implant ' + POS[(i * 7 + k * 3) % POS.length];
+        el.setAttribute('aria-hidden', 'true');
+        el.innerHTML = '<i></i>';
+        host.classList.add('implant-host');
+        host.appendChild(el);
+        /* 错峰睁开：每个元素有自己的阈值 */
+        const at = 0.10 + ((i * 13 + k * 29) % 100) / 100 * 0.42;
+        implants.push({ el: el, host: host, opened: false, at: at });
       }
     });
+  }
 
-    /* ---- 鼻梁：只留一道竖的暗面 + 鼻尖一点光 */
-    g = ctx.createLinearGradient(cx - rx * 0.15, 0, cx + rx * 0.15, 0);
-    g.addColorStop(0, 'rgba(0,0,0,0)');
-    g.addColorStop(0.42, 'rgba(0,0,0,.38)');
-    g.addColorStop(0.58, 'rgba(0,0,0,.38)');
-    g.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = g;
-    ctx.fillRect(cx - rx * 0.17, eyeY + eyeRY * 0.4, rx * 0.34, ry * 0.52);
-
-    g = ctx.createRadialGradient(cx, cy + ry * 0.18, 0, cx, cy + ry * 0.18, rx * 0.22);
-    g.addColorStop(0, 'rgba(232,226,212,.26)');
-    g.addColorStop(1, 'rgba(232,226,212,0)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, w, h);
-
-    /* 鼻翼阴影 */
-    [-1, 1].forEach(function (s) {
-      const gx = cx + s * rx * 0.14;
-      const gy = cy + ry * 0.27;
-      const gg = ctx.createRadialGradient(gx, gy, 0, gx, gy, rx * 0.11);
-      gg.addColorStop(0, 'rgba(0,0,0,.50)');
-      gg.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = gg;
-      ctx.fillRect(0, 0, w, h);
-    });
-
-    /* ---- 嘴：一条不该笑的裂口 */
-    const my = cy + ry * 0.50;
-    const mw = rx * (0.335 + close * 0.05);
-    const mh = ry * (0.085 + close * 0.04);
-
-    /* 唇周陷进去的阴影 */
-    g = ctx.createRadialGradient(cx, my, 0, cx, my, mw * 1.9);
-    g.addColorStop(0, 'rgba(0,0,0,.62)');
-    g.addColorStop(0.55, 'rgba(0,0,0,.26)');
-    g.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.ellipse(cx, my, mw * 1.9, mh * 2.1, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    /* 口腔 */
-    ctx.save();
-    ctx.filter = 'blur(' + Math.max(1, w * 0.0016) + 'px)';
-    ctx.beginPath();
-    ctx.ellipse(cx, my, mw, mh, 0, 0, Math.PI * 2);
-    const mg = ctx.createRadialGradient(cx, my, 0, cx, my, mw);
-    mg.addColorStop(0, '#000');
-    mg.addColorStop(0.5, '#010000');
-    mg.addColorStop(1, '#0e0807');
-    ctx.fillStyle = mg;
-    ctx.fill();
-    ctx.restore();
-
-    /* 上唇线（两端微微下垂） */
-    ctx.beginPath();
-    ctx.moveTo(cx - mw * 1.02, my - mh * 0.62);
-    ctx.bezierCurveTo(cx - mw * 0.45, my - mh * 1.55, cx + mw * 0.45, my - mh * 1.55, cx + mw * 1.02, my - mh * 0.62);
-    ctx.strokeStyle = 'rgba(12,9,8,.60)';
-    ctx.lineWidth = ry * 0.011;
-    ctx.stroke();
-
-    /* 下唇一点湿光 */
-    ctx.beginPath();
-    ctx.moveTo(cx - mw * 0.9, my + mh * 0.78);
-    ctx.bezierCurveTo(cx - mw * 0.38, my + mh * 1.55, cx + mw * 0.38, my + mh * 1.55, cx + mw * 0.9, my + mh * 0.78);
-    ctx.strokeStyle = 'rgba(208,200,186,.16)';
-    ctx.lineWidth = ry * 0.009;
-    ctx.stroke();
-
-    /* ---- 下巴：只有最底下一弧受光 */
-    g = ctx.createRadialGradient(cx, cy + ry * 0.99, 0, cx, cy + ry * 0.99, rx * 0.72);
-    g.addColorStop(0, 'rgba(0,0,0,.72)');
-    g.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, w, h);
-
-    /* ---- 头顶沉进黑暗：不要让人看见发际线以上的轮廓 */
-    g = ctx.createLinearGradient(0, cy - ry * 1.08, 0, cy - ry * 0.52);
-    g.addColorStop(0, 'rgba(3,3,4,1)');
-    g.addColorStop(0.62, 'rgba(3,3,4,.86)');
-    g.addColorStop(1, 'rgba(3,3,4,0)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, w, h);
-
-    /* ---- 皮肤颗粒 */
-    ctx.globalCompositeOperation = 'overlay';
-    ctx.globalAlpha = 0.42;
-    ctx.fillStyle = ctx.createPattern(getNoise(), 'repeat');
-    ctx.fillRect(0, 0, w, h);
-    ctx.globalAlpha = 1;
-    ctx.globalCompositeOperation = 'source-over';
-
-    ctx.restore(); /* 结束 headPath 裁剪 */
-
-    /* ---- 脸边缘融进黑暗 */
-    const vg = ctx.createRadialGradient(cx, cy, Math.min(w, h) * 0.18, cx, cy, Math.max(w, h) * 0.72);
-    vg.addColorStop(0, 'rgba(0,0,0,0)');
-    vg.addColorStop(0.58, 'rgba(0,0,0,.34)');
-    vg.addColorStop(1, 'rgba(0,0,0,.98)');
-    ctx.fillStyle = vg;
-    ctx.fillRect(0, 0, w, h);
-
-    /* ---- 最外圈压到绝对黑：只留中间一小块可见 */
-    const ov = ctx.createRadialGradient(w * 0.5, h * 0.5, Math.min(w, h) * 0.20, w * 0.5, h * 0.5, Math.max(w, h) * 0.62);
-    ov.addColorStop(0, 'rgba(2,2,3,0)');
-    ov.addColorStop(0.55, 'rgba(2,2,3,.55)');
-    ov.addColorStop(1, 'rgba(2,2,3,1)');
-    ctx.fillStyle = ov;
-    ctx.fillRect(0, 0, w, h);
+  function updateImplants(x) {
+    let eyeX = (mx * 2.2).toFixed(1) + 'px';
+    let eyeY = (my * 1.6).toFixed(1) + 'px';
+    for (const im of implants) {
+      if (!im.opened && x >= im.at) {
+        im.opened = true;
+        im.el.classList.add('on');
+      }
+      if (im.opened) {
+        im.el.style.setProperty('--ex', eyeX);
+        im.el.style.setProperty('--ey', eyeY);
+      }
+    }
   }
 
   /* =========================================================
